@@ -12,10 +12,11 @@ import axios from 'axios'
 
 // 引入element-ui，并做配置
 import ElementUI from 'element-ui'
+// 注册ElementUI给vue
 Vue.use(ElementUI)
 
 // 引入axios和配置
-axios.defaults.baseURL = ''
+axios.defaults.baseURL = 'http://127.0.0.1:11333/api/private/v1/'
 Vue.prototype.$http = axios
 
 Vue.config.productionTip = false

@@ -9,19 +9,19 @@
       <el-form ref="loginFormRef" :model="loginForm" :rules="loginFormRules">
         <el-form-item prop="username">
           <el-input v-model="loginForm.username">
-            <i slot="prefix" class="iconfont icon-yonghu"></i>
+            <i slot="prefix" class="iconfont icon-user"></i>
           </el-input>
         </el-form-item>
         <el-form-item prop="password">
-          <el-input type="password" v-model="loginForm.password">
-            <i slot="prefix" class="iconfont icon-mima"></i>
+          <el-input type="password" v-model="loginForm.password" show-password>
+            <i slot="prefix" class="iconfont icon-3702mima"></i>
           </el-input>
         </el-form-item>
         <el-form-item>
           <el-row>
             <el-col :offset="15">
               <el-button type="primary" @click="login">登录</el-button>
-              <el-button type="info">重置</el-button>
+              <el-button type="info" @click="reset">重置</el-button>
             </el-col>
           </el-row>
         </el-form-item>
@@ -34,8 +34,8 @@ export default {
   data() {
     return {
       loginForm: {
-        username: 'admin',
-        password: '123465'
+        username: '',
+        password: ''
       },
       loginFormRules: {
         username: [
@@ -53,8 +53,29 @@ export default {
   },
   methods: {
     login() {
-      this.$router.push('/home')
+      this.$refs.loginFormRef.validate(async valid => {
+        // console.log(valid)
+        if (valid === true) {
+          // 发送ajax
+          const { data: dt } = await this.$http.post('/login', this.loginForm)
+          // console.log(dt)
+          if (dt.meta.status !== 200) {
+            // return this.$message.error('请输入用户名和密码')
+            this.$message({
+              message: dt.meta.msg,
+              type: 'error',
+              duration: 1000
+            })
+          }
+          window.sessionStorage.setItem('token', dt.data.token)
+          this.$router.push('/home')
+        }
+      })
+    },
+    reset() {
       // console.log(this)
+      this.$refs.loginFormRef.resetFields()
+      // console.log(222)
     }
   }
 }
