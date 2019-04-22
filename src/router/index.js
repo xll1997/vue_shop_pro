@@ -4,11 +4,19 @@ import Router from 'vue-router'
 import Login from '@/components/Login.vue'
 // 引入后台首页面home
 import Home from '@/components/Home.vue'
+// 引入welcome
+import Welcome from '@/components/Welcome.vue'
 Vue.use(Router)
 const router = new Router({
   routes: [
+    {path: '/', redirect: '/home'},
     {path: '/login', component: Login},
-    {path: '/home', component: Home}
+    {
+      path: '/home',
+      component: Home,
+      redirect: '/welcome',
+      children: [{path: '/welcome', component: Welcome}]
+    }
   ]
 })
 
