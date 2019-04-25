@@ -6,6 +6,8 @@ import Login from '@/components/Login.vue'
 import Home from '@/components/Home.vue'
 // 引入welcome
 import Welcome from '@/components/Welcome.vue'
+// 引入User
+import User from '@/components/User.vue'
 Vue.use(Router)
 const router = new Router({
   routes: [
@@ -15,7 +17,10 @@ const router = new Router({
       path: '/home',
       component: Home,
       redirect: '/welcome',
-      children: [{path: '/welcome', component: Welcome}]
+      children: [
+        {path: '/welcome', component: Welcome},
+        {path: '/users', component: User}
+      ]
     }
   ]
 })

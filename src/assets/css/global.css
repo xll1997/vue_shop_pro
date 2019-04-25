@@ -1,11 +1,36 @@
-html, body, #app {
-    height: 100%;
-    margin: 0;
-    padding: 0;
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  min-width: 1200px;
 }
-.el-submenu__title span {
-    font-size: 13px;
+
+/* 字体大小 */
+.el-submenu__title span,
+.el-menu-item span {
+  font-size: 13px;
 }
+
+/* 图标 */
 i.iconfont {
-    margin-right: 10px;
+  margin-right: 10px;
+}
+
+/* 卡片 */
+.box-card {
+  margin-top: 15px;
+  box-shadow: 0, 1px, 1px, rgba(0, 0, 0, 0.15);
+}
+
+/* table */
+.el-table {
+  margin-top: 15px;
+  font-size: 12px;
+}
+
+/* 分页 */
+.el-pagination {
+  margin-top: 15px;
 }

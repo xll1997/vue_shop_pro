@@ -22,7 +22,9 @@ axios.interceptors.request.use(function(config) {
   // console.dir(axios)
   // console.dir(config)
   var token = window.sessionStorage.getItem('token')
-  config.headers.Authorization = token
+  if (token !== null) {
+    config.headers.Authorization = token
+  }
   return config
 }, function(error) {
   return Promise.reject(error)
