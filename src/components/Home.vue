@@ -79,7 +79,7 @@ export default {
       this.meunList = dt.data
     },
     handleSelect(key, keyPath) {
-      console.log(key, keyPath)
+      // console.log(key, keyPath)
     },
     // 退出系统
     logout() {

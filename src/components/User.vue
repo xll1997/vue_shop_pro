@@ -1,11 +1,35 @@
 <template>
   <!-- <div>用户列表管理</div> -->
   <div>
-    <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item>用户管理</el-breadcrumb-item>
-      <el-breadcrumb-item>用户列表</el-breadcrumb-item>
-    </el-breadcrumb>
+    <com-crumb nm="用户"/>
+
+    <!-- 用户分配角色 -->
+    <el-dialog
+      title="用户分配角色"
+      :visible.sync="setRoleDialog"
+      width="50%"
+      @close="$refs.setRoleRef.resetFields()"
+    >
+      <el-form :rules="setRoleRules" :model="setRole" ref="setRoleRef" label-width="120px">
+        <el-form-item label="当前用户:" prop="username">{{ setRole.username }}</el-form-item>
+        <el-form-item label="当前角色:" prop="role_name">{{ setRole.role_name }}</el-form-item>
+        <el-form-item label="分配新角色:" prop="rid">
+          <el-select v-model="setRole.rid" placeholder="请选择">
+            <!-- label: 分组的别名 value: 选项的值 -->
+            <el-option
+              v-for="item in roleList"
+              :key="item.id"
+              :label="item.roleName"
+              :value="item.id"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="distributeDialog = false">取 消</el-button>
+        <el-button type="primary" @click="fenRights">确 定</el-button>
+      </span>
+    </el-dialog>
 
     <!-- 添加新成员 -->
     <el-dialog title="添加用户" :visible.sync="dialogVisible" width="50%" @close="addResetDialog">
@@ -91,7 +115,11 @@
         <el-table-column prop="role_name" label="角色" width="130"></el-table-column>
         <el-table-column prop="email" label="邮箱"></el-table-column>
         <el-table-column prop="mg_state" label="状态" width="60">
-          <el-switch v-model="info.row.mg_state" slot-scope="info"></el-switch>
+          <el-switch
+            v-model="info.row.mg_state"
+            slot-scope="info"
+            @change="stateChange(info.row, info.row.mg_state)"
+          ></el-switch>
         </el-table-column>
         <el-table-column prop="address" label="操作">
           <template slot-scope="info">
@@ -109,6 +137,7 @@
               size="mini"
               @click="userDelete(info.row.id)"
             ></el-button>
+            <!-- 分配角色 -->
             <el-tooltip
               class="item"
               effect="dark"
@@ -116,7 +145,12 @@
               placement="top"
               :enterable="false"
             >
-              <el-button type="warning" icon="el-icon-setting" size="mini"></el-button>
+              <el-button
+                type="warning"
+                icon="el-icon-setting"
+                size="mini"
+                @click="showSetRole(info.row)"
+              ></el-button>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -223,10 +257,68 @@ export default {
             trigger: 'blur'
           }
         ]
-      }
+      },
+      // 分配角色
+      setRoleDialog: false,
+      setRoleRules: {
+        rid: [
+          { required: true, message: '必须选择一个角色', trigger: 'change' }
+        ]
+      }, // 表单验证
+      setRole: {
+        username: '',
+        role_name: '',
+        // 选中角色用此数据接收
+        rid: 0
+      }, // 表单数据
+      roleList: [] // 用于分配的角色数据
     }
   },
   methods: {
+    // 修改用户状态
+    async stateChange(user, state) {
+      const { data: dt } = await this.$http.put(
+        `users/${user.id}/state/${state}`
+      )
+      // console.log(dt)
+      if (dt.meta.status !== 200) {
+        return this.$message.error(dt.meta.msg)
+      }
+      this.$message.success(dt.meta.msg)
+    },
+    // 分配角色
+    // 发送数据
+    fenRights() {
+      this.$refs.setRoleRef.validate(async valid => {
+        if (valid) {
+          const { data: dt } = await this.$http.put(
+            `users/${this.setRole.id}/role`,
+            {
+              rid: this.setRole.rid
+            }
+          )
+          // console.log(dt)
+          if (dt.meta.status !== 200) {
+            return this.$message.error(dt.meta.msg)
+          }
+          this.$message.success(dt.meta.msg)
+          this.setRoleDialog = false
+          this.getUseList()
+        }
+      })
+    },
+    // 展示分配表单
+    async showSetRole(user) {
+      // console.log(user)
+      const { data: dt } = await this.$http.get('roles')
+      // console.log(dt)
+      if (dt.meta.status !== 200) {
+        return this.$message.error(dt.meta.msg)
+      }
+      this.roleList = dt.data
+      this.setRole = user
+      this.setRoleDialog = true
+    },
     // 删除用户
     userDelete(id) {
       this.$confirm('此操作将永久删除该用户, 是否继续?', '删除', {
@@ -234,7 +326,7 @@ export default {
         cancelButtonText: '取消', // 取消文本按钮内容
         type: 'warning' // 消息类型，用于显示图标
       })
-        .then(async () => {
+        .then(async() => {
           const { data: dt } = await this.$http.delete('users/' + id)
           // console.log(dt)
           if (dt.meta.status !== 200) {
@@ -304,7 +396,10 @@ export default {
       this.$refs.editRuleForm.validate(async valid => {
         if (valid) {
           console.log(this.edituse)
-          const { data: dt } = await this.$http.put('/users/' + this.edituse.id, this.edituse)
+          const { data: dt } = await this.$http.put(
+            '/users/' + this.edituse.id,
+            this.edituse
+          )
           console.log(dt)
           if (dt.meta.status !== 200) {
             return this.$message.error(dt.meta.msg)

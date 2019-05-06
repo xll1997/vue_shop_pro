@@ -1,15 +1,47 @@
 import Vue from 'vue'
-import Router from 'vue-router'
+import VueRouter from 'vue-router'
+
+// const Foo = () => Promise.resolve({ /* component definition */ })
+
 // 引入login
-import Login from '@/components/Login.vue'
+// import Login from '@/components/Login.vue'
+const Login = () => import('@/components/Login.vue')
 // 引入后台首页面home
-import Home from '@/components/Home.vue'
+const Home = () => import('@/components/Home.vue')
+// import Home from '@/components/Home.vue'
 // 引入welcome
-import Welcome from '@/components/Welcome.vue'
+const Welcome = () => import('@/components/Welcome.vue')
+// import Welcome from '@/components/Welcome.vue'
 // 引入User
-import User from '@/components/User.vue'
-Vue.use(Router)
-const router = new Router({
+const User = () => import('@/components/User.vue')
+// import User from '@/components/User.vue'
+// 引入Rights
+const Rights = () => import('@/components/Rights.vue')
+// import Rights from '@/components/Rights.vue'
+// 引入Role
+const Role = () => import('@/components/Role.vue')
+// import Role from '@/components/Role.vue'
+// 引入Cat
+const Cat = () => import('@/components/Cat.vue')
+// import Cat from '@/components/Cat.vue'
+// 引入Param
+const Param = () => import('@/components/Param.vue')
+// import Param from '@/components/Param.vue'
+// 引入Goods
+const Goods = () => import('@/components/Goods.vue')
+// import Goods from '@/components/Goods.vue'
+// 引入GoodsAdd
+const GoodsAdd = () => import('@/components/GoodsAdd.vue')
+// import GoodsAdd from '@/components/GoodsAdd.vue'
+// 引入Order
+const Order = () => import('@/components/Order.vue')
+// import Order from '@/components/Order.vue'
+// 引入Report
+const Report = () => import('@/components/Report.vue')
+// import Report from '@/components/Report.vue'
+
+Vue.use(VueRouter)
+const router = new VueRouter({
   routes: [
     {path: '/', redirect: '/home'},
     {path: '/login', component: Login},
@@ -19,7 +51,15 @@ const router = new Router({
       redirect: '/welcome',
       children: [
         {path: '/welcome', component: Welcome},
-        {path: '/users', component: User}
+        {path: '/users', component: User},
+        {path: '/rights', component: Rights},
+        {path: '/roles', component: Role},
+        {path: '/categories', component: Cat},
+        {path: '/params', component: Param},
+        {path: '/goods', component: Goods},
+        {path: '/goodsadd', component: GoodsAdd},
+        {path: '/orders', component: Order},
+        {path: '/reports', component: Report}
       ]
     }
   ]
